@@ -43,8 +43,6 @@ function G4G(){
   };
 
   this.showPopup = function(current_host, new_link) {
-    console.log(new_link);
-
     var self = this;
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
     $.get(templateFile, function (template) {
@@ -65,12 +63,10 @@ function G4G(){
     var g4gPresent = /[?&]g4g=/.test(location.search);
     if (g4gPresent) {
       kango.storage.setItem("g4gParam:" + host, new Date().getTime());
-    };
+    }
   };
 
   this.canDisplayPopup = function(host){
-    console.log("button: " +self.validateClosedButtonDate(host));
-    console.log("param: " +self.validateG4GParam(host));
     return self.validateClosedButtonDate(host) && self.validateG4GParam(host);
   };
 
