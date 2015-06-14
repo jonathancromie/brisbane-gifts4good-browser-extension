@@ -76,7 +76,17 @@ function G4G(){
 
   this.validateG4GParam = function(host){
     var g4gParamAccepted = kango.storage.getItem("g4gParam:" + host);
-    return !g4gParamAccepted;
+    if (!g4gParamAccepted) { return true };
+
+    var todayNB   = new Date().getTime();
+    var fiveMinMs  = 300000;
+
+    if ((todayNB - g4gParamAccepted) > fiveMinMs){
+      kango.storage.removeItem("g4gParam:" + host);
+      return true;
+    } else {
+      return false;
+    }
   };
 
   this.validateClosedButtonDate = function(host) {
