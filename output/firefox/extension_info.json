@@ -1,0 +1,22 @@
+{
+    "content_scripts": [
+        "domain_watcher.js"
+    ], 
+    "description": "Extension description", 
+    "creator": "Random Hack of Kindness Brisbane", 
+    "framework_version": "1.7.6 e5b39c50d196", 
+    "package_id": "kango-9d45ee3a-cdb4-453b-832e-3096dec3b2d0", 
+    "background_scripts": [
+        "toolbar.js"
+    ], 
+    "homepage_url": "http://rhokbrisbane.org/", 
+    "version": "0.9.0", 
+    "framework_package_id": "dev", 
+    "browser_button": {
+        "caption": "Gifts4Good", 
+        "tooltipText": "Gifts4Good", 
+        "icon": "icons/icon32.png"
+    }, 
+    "id": "{9D45EE3A-CDB4-453B-832E-3096DEC3B2D0}", 
+    "name": "Gifts4good"
+}

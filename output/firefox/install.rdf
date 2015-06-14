@@ -1,0 +1,23 @@
+<?xml version="1.0" ?><RDF xmlns="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:em="http://www.mozilla.org/2004/em-rdf#">
+    <Description about="urn:mozilla:install-manifest">
+        <em:id>{9D45EE3A-CDB4-453B-832E-3096DEC3B2D0}</em:id>
+        <em:name>Gifts4good</em:name>
+        <em:version>0.9.0</em:version>
+        <em:targetApplication>
+            <Description>
+                <em:id>{ec8030f7-c20a-464f-9b0e-13a3a9e97384}</em:id>
+                <em:minVersion>17.0</em:minVersion>
+                <em:maxVersion>36.*</em:maxVersion>
+            </Description>
+        </em:targetApplication>
+        <em:bootstrap>true</em:bootstrap>
+        <em:description>Extension description</em:description>
+        <em:creator>Random Hack of Kindness Brisbane</em:creator>
+        <em:homepageURL>http://rhokbrisbane.org/</em:homepageURL>
+        <em:iconURL>chrome://kango-9d45ee3a-cdb4-453b-832e-3096dec3b2d0/content/icons/icon32.png</em:iconURL>
+        
+        
+        
+        <em:type>2</em:type>
+    </Description>
+</RDF>

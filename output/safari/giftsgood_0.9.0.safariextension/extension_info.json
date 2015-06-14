@@ -1,0 +1,22 @@
+{
+    "content_scripts": [
+        "domain_watcher.js"
+    ], 
+    "description": "Extension description", 
+    "creator": "Random Hack of Kindness Brisbane", 
+    "framework_version": "1.7.6 e5b39c50d196", 
+    "developer_id": "YOUR_SAFARI_DEVELOPER_ID", 
+    "background_scripts": [
+        "toolbar.js"
+    ], 
+    "homepage_url": "http://rhokbrisbane.org/", 
+    "version": "0.9.0", 
+    "framework_package_id": "dev", 
+    "browser_button": {
+        "caption": "Gifts4Good", 
+        "tooltipText": "Gifts4Good", 
+        "icon": "icons/icon32.png"
+    }, 
+    "id": "com.kangoextensions.giftsgood", 
+    "name": "Gifts4good"
+}
