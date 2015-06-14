@@ -15,7 +15,7 @@ function G4G(){
     this.getSupportedURLs().then(function(data){
       var host          = self.getCurrentHost();
       var supportedHost = !!_.find(data, function(value, key){ return key === host });
-      if (supportedHost) { self.showPopup(host, self.parseUrl(data[host])); }
+      if (supportedHost && self.canDisplayPopup(host)) { self.showPopup(host, self.parseUrl(data[host])); }
     });
   };
 
@@ -40,11 +40,34 @@ function G4G(){
   };
 
   this.showPopup = function(current_host, new_link) {
+    var self = this;
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
     $.get(templateFile, function (template) {
       var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
       $('body').append(rendered);
+      self.bindStopShow(current_host);
     });
+  };
+
+  this.bindStopShow = function(host){
+    $('.g4g-noshop').click(function(){
+      kango.storage.setItem(host, new Date().getTime());
+      $('#g4g-popup').remove();
+    });
+  };
+
+  this.canDisplayPopup = function(host){
+    var dateNb    = kango.storage.getItem(host);
+    if (!dateNb)    { return true; }
+    var todayNB   = new Date().getTime();
+    var oneDayMs  = 86400000;
+
+    if ((todayNB - dateNb) > oneDayMs){
+      kango.storage.removeItem(host);
+      return true;
+    } else {
+      return false;
+    }
   };
 }
 
