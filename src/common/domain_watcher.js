@@ -10,10 +10,13 @@ function G4G(){
   var self   = this;
 
   this._init = function(){
-    $        = window.$.noConflict(true);
-    _        = window._.noConflict(true);
+    $ = window.$.noConflict(true);
+    _ = window._.noConflict(true);
+
     this.getSupportedURLs().then(function(data){
-      var host          = self.getCurrentHost();
+      var host = self.getCurrentHost();
+      self.storeG4GParam(host);
+
       var supportedHost = !!_.find(data, function(value, key){ return key === host });
       if (supportedHost && self.canDisplayPopup(host)) { self.showPopup(host, self.parseUrl(data[host])); }
     });
@@ -40,6 +43,8 @@ function G4G(){
   };
 
   this.showPopup = function(current_host, new_link) {
+    console.log(new_link);
+
     var self = this;
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
     $.get(templateFile, function (template) {
@@ -51,19 +56,38 @@ function G4G(){
 
   this.bindStopShow = function(host){
     $('.g4g-noshop').click(function(){
-      kango.storage.setItem(host, new Date().getTime());
+      kango.storage.setItem("closeButton:" + host, new Date().getTime());
       $('#g4g-popup').remove();
     });
   };
 
+  this.storeG4GParam = function(host){
+    var g4gPresent = /[?&]g4g=/.test(location.search);
+    if (g4gPresent) {
+      kango.storage.setItem("g4gParam:" + host, new Date().getTime());
+    };
+  };
+
   this.canDisplayPopup = function(host){
-    var dateNb    = kango.storage.getItem(host);
-    if (!dateNb)    { return true; }
+    console.log("button: " +self.validateClosedButtonDate(host));
+    console.log("param: " +self.validateG4GParam(host));
+    return self.validateClosedButtonDate(host) && self.validateG4GParam(host);
+  };
+
+  this.validateG4GParam = function(host){
+    var g4gParamAccepted = kango.storage.getItem("g4gParam:" + host);
+    return !g4gParamAccepted;
+  };
+
+  this.validateClosedButtonDate = function(host) {
+    var closePopupKey = kango.storage.getItem("closeButton:" + host);
+    if (!closePopupKey) { return true; }
+
     var todayNB   = new Date().getTime();
     var oneDayMs  = 86400000;
 
-    if ((todayNB - dateNb) > oneDayMs){
-      kango.storage.removeItem(host);
+    if ((todayNB - closePopupKey) > oneDayMs){
+      kango.storage.removeItem("closeButton:" + host);
       return true;
     } else {
       return false;
