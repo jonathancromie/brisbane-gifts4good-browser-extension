@@ -1,6 +1,7 @@
 // ==UserScript==
 // @require jquery.min.js
 // @require mustache.min.js
+// @require lodash.min.js
 // @include http://*
 // @include https://*
 // ==/UserScript==
@@ -10,14 +11,11 @@ function G4G(){
 
   this._init = function(){
     $        = window.$.noConflict(true);
+    _        = window._.noConflict(true);
     this.getSupportedURLs().then(function(data){
-      var host = self.getCurrentHost();
-      $.each(data, function(key, value) {
-        console.log(key);
-        if (host === key){
-          self.showPopup(key, value);
-        }
-      });
+      var host          = self.getCurrentHost();
+      var supportedHost = !!_.find(data, undefined, function(value, key){ key === host });
+      if (supportedHost) { self.showPopup(host, data[host]); }
     });
   };
 
