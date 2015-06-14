@@ -9,7 +9,7 @@
     "version": "0.9.0", 
     "browser_button": {
         "caption": "Gifts4Good",
-        "icon": "icons/logo-gifts4good.png",
+        "icon": "icons/icon32.png",
         "tooltipText": "Gifts4Good"
     }, 
     "name": "Gifts4good"
