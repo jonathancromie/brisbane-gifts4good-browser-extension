@@ -15,7 +15,7 @@ function G4G(){
     this.getSupportedURLs().then(function(data){
       var host          = self.getCurrentHost();
       var supportedHost = !!_.find(data, function(value, key){ return key === host });
-      if (supportedHost) { self.showPopup(host, data[host]); }
+      if (supportedHost) { self.showPopup(host, self.parseUrl(data[host])); }
     });
   };
 
@@ -28,8 +28,15 @@ function G4G(){
     return deferred.promise();
   };
 
+  this.parseUrl = function(url) {
+    return url.
+      replace("{cause}", "GIVIT").
+      replace("{memberId}", "1111").
+      replace("{uniqueId}", Date.now());
+  };
+
   this.getCurrentHost = function(){
-    return window.location.host;
+    return window.location.host.replace('www.', '');
   };
 
   this.showPopup = function(current_host, new_link) {
