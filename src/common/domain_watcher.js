@@ -14,7 +14,7 @@ function G4G(){
     _        = window._.noConflict(true);
     this.getSupportedURLs().then(function(data){
       var host          = self.getCurrentHost();
-      var supportedHost = !!_.find(data, undefined, function(value, key){ key === host });
+      var supportedHost = !!_.find(data, function(value, key){ return key === host });
       if (supportedHost) { self.showPopup(host, data[host]); }
     });
   };
