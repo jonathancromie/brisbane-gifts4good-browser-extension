@@ -1,5 +1,6 @@
 // ==UserScript==
 // @require jquery.min.js
+// @require mustache.min.js
 // @include http://*
 // @include https://*
 // ==/UserScript==
@@ -14,7 +15,7 @@ function G4G(){
       $.each(data, function(key, value) {
         console.log(key);
         if (host === key){
-          self.showPopup(value);
+          self.showPopup(key, value);
         }
       });
     });
@@ -33,10 +34,12 @@ function G4G(){
     return window.location.host;
   };
 
-  this.showPopup = function(value){
-    var $toolbar = $("<div />").addClass("g4g-popup").appendTo("body");
-    console.log('is about to dump Oli in the DOM');
-    $toolbar.text('Oliiiiii');
+  this.showPopup = function(current_host, new_link) {
+    var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
+    $.get(templateFile, function (template) {
+      var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
+      $('body').append(rendered);
+    });
   };
 }
 

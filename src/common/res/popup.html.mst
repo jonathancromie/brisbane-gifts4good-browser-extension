@@ -1,0 +1,5 @@
+<div id="g4g-popup">
+  We notice you are browsing {{ current_host }} which is a G4G supported retailer.
+  Would you like to shop with G4G so that your purchases make a difference?
+  <a href="{{ new_link }}">Yes</a>
+</div>
