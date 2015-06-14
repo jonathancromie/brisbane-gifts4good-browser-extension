@@ -15,13 +15,15 @@ entries.each do |entry|
   next if entry[:affiliate_link].blank?
   next if entry[:enabled] == "N"
 
-  affiliate_link = entry[:affiliate_link].gsub("\"", '').split[0]
-  home_url       = entry[:home_url]
+  affiliate_link = entry[:affiliate_link].gsub("\"", '').split[0].sub(/^https?\:\/\//, '')
+  home_url       = entry[:home_url].sub(/^www./,'').sub(/^https?\:\/\//, '')
 
-  data[home_url] = affiliate_link
+  base_url = "http://g4gdata.com/gift4good/test.php?link={url}&cause={cause}&UniqueId={uniqueId}&memberID={memberId}"
+
+  data[home_url] = base_url.sub("{url}", URI.escape(affiliate_link))
 end
 
-File.open("affiliates.json", "w") do |file|
+File.open("src/common/res/affiliates.json", "w") do |file|
   file.write(JSON.pretty_generate(data))
 end
 
