@@ -1,6 +1,6 @@
 ﻿"use strict";
 _kangoLoader.add("kango/timer", function(require, exports, module) {
-var utils=require("kango/utils"),NotImplementedException=utils.NotImplementedException;function ITimer(){}ITimer.prototype={setInterval:function(a,b){return new NotImplementedException},clearInterval:function(a){return new NotImplementedException},setTimeout:function(a,b){return new NotImplementedException},clearTimeout:function(a){return new NotImplementedException}};function getPublicApi(){return utils.createApiWrapper(module.exports,ITimer.prototype)};
+function ITimer(){}function getPublicApi(){return utils.createApiWrapper(module.exports,ITimer.prototype)}var utils=require("kango/utils"),NotImplementedException=utils.NotImplementedException;ITimer.prototype={setInterval:function(e,t){return new NotImplementedException},clearInterval:function(e){return new NotImplementedException},setTimeout:function(e,t){return new NotImplementedException},clearTimeout:function(e){return new NotImplementedException}};
 
 
 
@@ -8,7 +8,5 @@ var utils=require("kango/utils"),NotImplementedException=utils.NotImplementedExc
 
 
 
-
-function Timer(){}Timer.prototype={setInterval:function(a,b){return window.setInterval(a,b)},clearInterval:function(a){return window.clearInterval(a)},setTimeout:function(a,b){return window.setTimeout(a,b)},clearTimeout:function(a){return window.clearTimeout(a)}};module.exports=new Timer;module.exports.getPublicApi=getPublicApi;
-
+function Timer(){}Timer.prototype={setInterval:function(e,t){return window.setInterval(e,t)},clearInterval:function(e){return window.clearInterval(e)},setTimeout:function(e,t){return window.setTimeout(e,t)},clearTimeout:function(e){return window.clearTimeout(e)}},module.exports=new Timer,module.exports.getPublicApi=getPublicApi;
 });

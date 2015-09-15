@@ -24,9 +24,16 @@ function G4G(){
 
   this.getSupportedURLs = function(){
     var deferred = new $.Deferred();
-    var url      = kango.io.getResourceUrl('res/affiliates.json');
-    $.getJSON(url, function(data) {
-      deferred.resolve(data);
+    var url = 'http://localhost/affiliate-store-item-list.json';
+    $.getJSON(url, function (data) {
+        // Get the 'items' from the first group.
+        var items = data.webapps_0.items;     
+
+        for (var item in items) {
+          if (self.getCurrentHost() === items[item]["Home URL"]) {
+            document.write(correctURL(items[item]["Home URL"]));
+          }
+        }
     });
     return deferred.promise();
   };
@@ -36,6 +43,11 @@ function G4G(){
       replace("{cause}", "GIVIT").
       replace("{memberId}", "1111").
       replace("{uniqueId}", Date.now());
+  };
+
+  this.correctURL = function(url) {
+    var hostURL = url.replace("www.", "");
+    return hostURL;
   };
 
   this.getCurrentHost = function(){

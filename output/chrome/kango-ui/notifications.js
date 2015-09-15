@@ -1,6 +1,6 @@
 ﻿"use strict";
 _kangoLoader.add("kango-ui/notifications", function(require, exports, module) {
-var utils=require("kango/utils"),object=utils.object,EventTarget=utils.EventTarget,NotImplementedException=utils.NotImplementedException;function INotifications(){}INotifications.prototype={show:function(a,b,c,d){throw new NotImplementedException;}};function getPublicApi(){return utils.createApiWrapper(module.exports,INotifications.prototype)};
+function INotifications(){}function getPublicApi(){return utils.createApiWrapper(module.exports,INotifications.prototype)}var utils=require("kango/utils"),object=utils.object,EventTarget=utils.EventTarget,NotImplementedException=utils.NotImplementedException;INotifications.prototype={show:function(t,e,o,i){throw new NotImplementedException}};
 
 
 
@@ -8,8 +8,5 @@ var utils=require("kango/utils"),object=utils.object,EventTarget=utils.EventTarg
 
 
 
-
-var utils=require("kango/utils"),func=utils.func;function Notifications(){this._clickCallbacks={};this._lastId=0;"undefined"!=typeof chrome.notifications&&chrome.notifications.onClicked.addListener(func.bind(function(a){this._fireNotificationEvent(a)},this))}
-Notifications.prototype={_fireNotificationEvent:function(a){if(this._clickCallbacks[a])this._clickCallbacks[a]()},_getNextId:function(){return(++this._lastId).toString()},show:function(a,d,e,b){var c=this._getNextId();chrome.notifications.create(c,{type:"basic",iconUrl:e||"",title:a,message:d},function(){});b&&(this._clickCallbacks[c]=b)}};module.exports=new Notifications;module.exports.getPublicApi=getPublicApi;
-
+function Notifications(){this._clickCallbacks={},this._lastId=0,"undefined"!=typeof chrome.notifications&&chrome.notifications.onClicked.addListener(func.bind(function(i){this._fireNotificationEvent(i)},this))}var utils=require("kango/utils"),func=utils.func;Notifications.prototype={_fireNotificationEvent:function(i){this._clickCallbacks[i]&&this._clickCallbacks[i]()},_getNextId:function(){return(++this._lastId).toString()},show:function(i,t,c,n){var o=this._getNextId();chrome.notifications.create(o,{type:"basic",iconUrl:c||"",title:i,message:t},function(){}),n&&(this._clickCallbacks[o]=n)}},module.exports=new Notifications,module.exports.getPublicApi=getPublicApi;
 });

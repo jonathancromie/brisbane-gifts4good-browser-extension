@@ -1,7 +1,6 @@
 ﻿"use strict";
 _kangoLoader.add("kango/extension_info", function(require, exports, module) {
-var utils=require("kango/utils"),object=utils.object;
-function ExtensionInfo(a){this.getRawData=function(){return object.clone(a)};this.update=function(b){object.mixin(a,b);object.mixin(this,b)};this.homepage_url=this.creator=this.description=this.version=this.name="";this.background_scripts=[];this.content_scripts=[];this.browser_button=null;this.options_page=this.update_path_url="";this.context_menu_item=null;this.default_locale="";this.permissions={};this.debug=!1;this.modules=[];this.settings={};object.mixin(this,a)};
+function ExtensionInfo(t){this.getRawData=function(){return object.clone(t)},this.update=function(i){object.mixin(t,i),object.mixin(this,i)},this.name="",this.version="",this.description="",this.creator="",this.homepage_url="",this.background_scripts=[],this.content_scripts=[],this.browser_button=null,this.update_path_url="",this.options_page="",this.context_menu_item=null,this.default_locale="",this.permissions={},this.debug=!1,this.modules=[],this.settings={},object.mixin(this,t)}var utils=require("kango/utils"),object=utils.object;
 
 
 
@@ -9,7 +8,5 @@ function ExtensionInfo(a){this.getRawData=function(){return object.clone(a)};thi
 
 
 
-
-var getExtensionInfo=function(){var a=new XMLHttpRequest;a.open("GET",chrome.extension.getURL("extension_info.json"),!1);a.overrideMimeType("text/plain");a.send(null);return JSON.parse(a.responseText)};module.exports=new ExtensionInfo(getExtensionInfo());
-
+var getExtensionInfo=function(){var e=new XMLHttpRequest;return e.open("GET",chrome.extension.getURL("extension_info.json"),!1),e.overrideMimeType("text/plain"),e.send(null),JSON.parse(e.responseText)};module.exports=new ExtensionInfo(getExtensionInfo());
 });

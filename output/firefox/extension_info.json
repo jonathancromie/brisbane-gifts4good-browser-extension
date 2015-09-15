@@ -4,7 +4,7 @@
     ], 
     "description": "Extension description", 
     "creator": "Random Hack of Kindness Brisbane", 
-    "framework_version": "1.7.6 e5b39c50d196", 
+    "framework_version": "1.7.9 e39b6ff2fcc8", 
     "package_id": "kango-9d45ee3a-cdb4-453b-832e-3096dec3b2d0", 
     "background_scripts": [
         "toolbar.js"

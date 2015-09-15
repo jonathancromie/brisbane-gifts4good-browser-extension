@@ -1,6 +1,6 @@
 ﻿"use strict";
 _kangoLoader.add("kango/lang", function(require, exports, module) {
-var NotImplementedException=require("kango/utils").NotImplementedException;function LangBase(){}LangBase.prototype={evalInSandbox:function(e,a){throw new NotImplementedException;},evalScriptsInSandbox:function(e,a){for(var b="",c=0;c<a.length;c++){for(var d=0;d<a[c].requires.length;d++)b+=a[c].requires[d].text+"\n\n";b+=a[c].text+"\n\n"}return this.evalInSandbox(e,b)}};
+function LangBase(){}var NotImplementedException=require("kango/utils").NotImplementedException;LangBase.prototype={evalInSandbox:function(e,n){throw new NotImplementedException},evalScriptsInSandbox:function(e,n){for(var t="",o=0;o<n.length;o++){for(var r=0;r<n[o].requires.length;r++)t+=n[o].requires[r].text+"\n\n";t+=n[o].text+"\n\n"}return this.evalInSandbox(e,t)}};
 
 
 
@@ -8,7 +8,5 @@ var NotImplementedException=require("kango/utils").NotImplementedException;funct
 
 
 
-
-var object=require("kango/utils").object;function Lang(){}Lang.prototype=object.extend(LangBase,{createHTMLSandbox:function(b,a){return a(window)}});module.exports=new Lang;
-
+function Lang(){}var object=require("kango/utils").object;Lang.prototype=object.extend(LangBase,{createHTMLSandbox:function(e,n){return n(window)}}),module.exports=new Lang;
 });
