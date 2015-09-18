@@ -27,10 +27,14 @@ function G4G(){
     var url = 'http://localhost/affiliate-store-item-list.json';
     $.getJSON(url, function (data) {
         // Get the 'items' array from the affiliates link.
-        var items = data.webapps_0.items;     
+        var items = data.webapps_0.items; 
 
         for (var item in items) {
+
+          var optIn = items[item]["Download opt in"];
+
           if (self.getCurrentHost() === self.correctURL(items[item]["Home URL"])) {
+            
             console.log(correctURL(items[item]["Home URL"]));
           }
         }

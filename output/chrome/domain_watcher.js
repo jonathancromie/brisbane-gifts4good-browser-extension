@@ -26,7 +26,7 @@ function G4G(){
     var deferred = new $.Deferred();
     var url = 'http://localhost/affiliate-store-item-list.json';
     $.getJSON(url, function (data) {
-        // Get the 'items' from the first group.
+        // Get the 'items' array from the affiliates link.
         var items = data.webapps_0.items;     
 
         for (var item in items) {

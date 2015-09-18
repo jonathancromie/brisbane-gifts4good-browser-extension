@@ -7,7 +7,7 @@
 
 G4G.prototype = {
   _onCommand: function() {
-    kango.browser.tabs.create({url: 'http://www.gifts4good.org.au/'});
+    kango.browser.tabs.create({url: 'http://g4gqut.businesscatalyst.com/'});
   }
 
   /*
