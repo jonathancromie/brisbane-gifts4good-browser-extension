@@ -17,23 +17,26 @@ function G4G(){
       var host = self.getCurrentHost();
       self.storeG4GParam(host);
 
-      var supportedHost = !!_.find(data, function(value, key){ return key === host });
-      if (supportedHost && self.canDisplayPopup(host)) { self.showPopup(host, self.parseUrl(data[host])); }
+      // var supportedHost = !!_.find(data, function(key, value){ return value === host });
+      var supportedHost = !!_.each(data, function(key, value) {
+        var url = value["Host URL"];
+        return url === host;
+      });
+      if (supportedHost && self.canDisplayPopup(host)) { 
+        // self.showPopup(host, self.parseUrl(data[host]));
+        self.showPopup(host, data[host]);
+      }
     });
   };
 
   this.getSupportedURLs = function(){
     var deferred = new $.Deferred();
     var url = 'http://localhost/affiliate-store-item-list.json';
-    $.getJSON(url, function (data) {
-        // Get the 'items' array from the affiliates link.
-        var items = data.webapps_0.items;     
+    // var url      = kango.io.getResourceUrl('res/affiliates.json');
+    // var url = self.getAffiliateUrl('http://localhost/affiliate-store-item-list.json');    
 
-        for (var item in items) {
-          if (self.getCurrentHost() === self.correctURL(items[item]["Home URL"])) {
-            console.log(correctURL(items[item]["Home URL"]));
-          }
-        }
+    $.getJSON(url, function(data) {
+      deferred.resolve(data);
     });
     return deferred.promise();
   };
@@ -43,10 +46,6 @@ function G4G(){
       replace("{cause}", "GIVIT").
       replace("{memberId}", "1111").
       replace("{uniqueId}", Date.now());
-  };
-
-  this.correctURL = function(url) {
-    return url.replace("www.", "");
   };
 
   this.getCurrentHost = function(){
