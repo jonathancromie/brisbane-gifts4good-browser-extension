@@ -30,8 +30,8 @@ function G4G(){
         var items = data.webapps_0.items;     
 
         for (var item in items) {
-          if (self.getCurrentHost() === items[item]["Home URL"]) {
-            document.write(correctURL(items[item]["Home URL"]));
+          if (self.getCurrentHost() === self.correctURL(items[item]["Home URL"])) {
+            console.log(correctURL(items[item]["Home URL"]));
           }
         }
     });
@@ -46,8 +46,7 @@ function G4G(){
   };
 
   this.correctURL = function(url) {
-    var hostURL = url.replace("www.", "");
-    return hostURL;
+    return url.replace("www.", "");
   };
 
   this.getCurrentHost = function(){
