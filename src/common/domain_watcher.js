@@ -13,44 +13,56 @@ function G4G(){
     $ = window.$.noConflict(true);
     _ = window._.noConflict(true);
 
-    this.getSupportedURLs().then(function(data){
+    this.getSupportedURLs().then(function(data) {
       var host = self.getCurrentHost();
       self.storeG4GParam(host);
 
-      // var supportedHost = !!_.find(data, function(key, value){ return value === host });
-      var supportedHost = !!_.each(data, function(key, value) {
-        var url = value["Host URL"];
-        return url === host;
-      });
+      var supportedHost = !!_.find(data, function(value, key) {
+        console.log(self.getHomeURL(value['Home URL']));
+        return self.getHomeURL(value['Home URL']) === host;       
+      }); 
+
       if (supportedHost && self.canDisplayPopup(host)) { 
-        // self.showPopup(host, self.parseUrl(data[host]));
-        self.showPopup(host, data[host]);
+        console.log('true');
+        self.showPopup(host, self.parseUrl(data[host])); 
       }
     });
   };
 
   this.getSupportedURLs = function(){
+    
+    // var url = 'http://localhost/affiliate-store-item-list.json';
+    var url = 'https://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
     var deferred = new $.Deferred();
-    var url = 'http://localhost/affiliate-store-item-list.json';
-    // var url      = kango.io.getResourceUrl('res/affiliates.json');
-    // var url = self.getAffiliateUrl('http://localhost/affiliate-store-item-list.json');    
-
     $.getJSON(url, function(data) {
-      deferred.resolve(data);
+      deferred.resolve(data['webapps_0']['items']);      
     });
-    return deferred.promise();
+    return deferred.promise(); 
   };
 
   this.parseUrl = function(url) {
-    return url.
-      replace("{cause}", "GIVIT").
-      replace("{memberId}", "1111").
-      replace("{uniqueId}", Date.now());
+    // return url.
+    //   replace("{cause}", "GIVIT").
+    //   replace("{memberId}", "1111").
+    //   replace("{uniqueId}", Date.now());
+    return url + "&cause=" + "{cause}" + "&uniqueId=" + "{uniqueId}" + "&memberId=" + "{memberId}";
   };
 
   this.getCurrentHost = function(){
-    return window.location.host.replace('www.', '');
+    return String(window.location.host.replace('https?://', ''));
   };
+
+  this.getHomeURL = function(url){
+   var domain;
+    //find & remove protocol (http, ftp, etc.) and get domain
+    if (url.indexOf("://") > -1) {
+        domain = url.split('/')[2];
+    }
+    else {
+        domain = url.split('/')[0];
+    }
+    return String(domain);
+  }
 
   this.showPopup = function(current_host, new_link) {
     var self = this;
@@ -82,7 +94,7 @@ function G4G(){
 
   this.validateG4GParam = function(host){
     var g4gParamAccepted = kango.storage.getItem("g4gParam:" + host);
-    if (!g4gParamAccepted) { return true };
+    if (!g4gParamAccepted) { return true }; 
 
     var todayNB   = new Date().getTime();
     var fiveMinMs  = 300000;
