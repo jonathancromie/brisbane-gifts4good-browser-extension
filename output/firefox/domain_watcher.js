@@ -15,17 +15,22 @@ function G4G(){
 
     this.getSupportedURLs().then(function(data) {
       var host = self.getCurrentHost();
-      self.storeG4GParam(host);
+      // self.storeG4GParam(host);
+
+      var url;
 
       var supportedHost = !!_.find(data, function(value, key) {
-        console.log(self.getHomeURL(value['Home URL']));
+        // console.log(value['Affiliate Link']);
+        url = value['Affiliate Link'];
+        // console.log(url);
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
-      if (supportedHost && self.canDisplayPopup(host)) { 
-        console.log('true');
-        self.showPopup(host, self.parseUrl(data[host])); 
+      if (supportedHost && self.canDisplayPopup(host)) {         
+          self.showPopup(host, self.parseUrl(host, url));
       }
+        // self.showPopup(host, self.parseUrl(data[host])); 
+        
     });
   };
 
@@ -40,13 +45,20 @@ function G4G(){
     return deferred.promise(); 
   };
 
-  this.parseUrl = function(url) {
+  this.parseUrl = function(oldUrl, newUrl) {
     // return url.
     //   replace("{cause}", "GIVIT").
     //   replace("{memberId}", "1111").
     //   replace("{uniqueId}", Date.now());
-    return url + "&cause=" + "{cause}" + "&uniqueId=" + "{uniqueId}" + "&memberId=" + "{memberId}";
+
+    // return url + "&cause=" + "{cause}" + "&uniqueId=" + "{uniqueId}" + "&memberId=" + "{memberId}";
+
+    return oldUrl.replace(oldUrl, newUrl);
   };
+
+  this.getPathName = function() {
+    return String(window.location.pathname);
+  }
 
   this.getCurrentHost = function(){
     return String(window.location.host.replace('https?://', ''));
