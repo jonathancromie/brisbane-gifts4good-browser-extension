@@ -17,17 +17,20 @@ function G4G(){
       var host = self.getCurrentHost();
       // self.storeG4GParam(host);
 
-      var url;
+      var affiliateLink;
+      var affiliateCode;
 
       var supportedHost = !!_.find(data, function(value, key) {
         // console.log(value['Affiliate Link']);
-        url = value['Affiliate Link'];
+        // affiliateLink = value['Affiliate Link'];
+        affiliateCode = value['Affiliate Program_id'];
         // console.log(url);
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
       if (supportedHost && self.canDisplayPopup(host)) {         
-          self.showPopup(host, self.parseUrl(host, url));
+          // self.showPopup(host, self.parseUrl(affiliateCode));
+          self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
       }
         // self.showPopup(host, self.parseUrl(data[host])); 
         
@@ -45,20 +48,46 @@ function G4G(){
     return deferred.promise(); 
   };
 
-  this.parseUrl = function(oldUrl, newUrl) {
+  this.parseUrl = function(code) {
     // return url.
     //   replace("{cause}", "GIVIT").
     //   replace("{memberId}", "1111").
     //   replace("{uniqueId}", Date.now());
 
-    // return url + "&cause=" + "{cause}" + "&uniqueId=" + "{uniqueId}" + "&memberId=" + "{memberId}";
+    return self.getAggregator(code) + "{uniqueId}";
 
-    return oldUrl.replace(oldUrl, newUrl);
+    // return oldUrl.replace(oldUrl, newUrl);
   };
 
-  this.getPathName = function() {
-    return String(window.location.pathname);
-  }
+  this.getAggregator = function(code) {
+    var format;
+    // 3 Main Aggregators
+    var apd = "?subId1=";
+    var commission_factory = "?UniqueId=";
+    var rakuten = "&u1=";
+
+    switch(code) {
+      //APD DGM
+      case "5027803":
+        return apd;
+        break;
+      // Commission Factory
+      case "5027801":
+        return commission_factory;
+        break;
+      // Rakuten Linkshare
+      case "5031316":
+        return rakuten;
+        break;
+      default:
+        break;
+
+    }
+  };
+
+  this.getDeepLink = function() {
+    return String(window.location.href);
+  };
 
   this.getCurrentHost = function(){
     return String(window.location.host.replace('https?://', ''));
