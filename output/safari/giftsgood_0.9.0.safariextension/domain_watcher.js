@@ -28,9 +28,9 @@ function G4G(){
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
-      if (supportedHost && self.canDisplayPopup(host)) {         
-          // self.showPopup(host, self.parseUrl(affiliateCode));
-          self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
+      if (supportedHost && self.canDisplayPopup(host)) {       
+          self.showPopup(host, self.parseUrl(affiliateCode));
+          // self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
       }
         // self.showPopup(host, self.parseUrl(data[host])); 
         
@@ -48,13 +48,33 @@ function G4G(){
     return deferred.promise(); 
   };
 
+  this.getUniqueId = function(id) {
+    var uniqueId;
+    $.ajax({
+      type: "GET",
+      url: "http://localhost/members.php?id="+id,
+      datatype: "html",
+      async: false,
+      success: function(response) {
+        // console.log(response);
+        uniqueId = response;
+      }
+    });
+    return uniqueId;
+  }
+
   this.parseUrl = function(code) {
     // return url.
     //   replace("{cause}", "GIVIT").
     //   replace("{memberId}", "1111").
     //   replace("{uniqueId}", Date.now());
 
-    return self.getAggregator(code) + "{uniqueId}";
+    var uniqueId = self.getUniqueId(1);
+
+    console.log(uniqueId);
+
+    // return self.getAggregator(code) + "{uniqueId}";
+    return self.getAggregator(code) + uniqueId;
 
     // return oldUrl.replace(oldUrl, newUrl);
   };
@@ -65,6 +85,7 @@ function G4G(){
     var apd = "?subId1=";
     var commission_factory = "?UniqueId=";
     var rakuten = "&u1=";
+    var amazon = "?tag=";
 
     switch(code) {
       //APD DGM
@@ -78,6 +99,10 @@ function G4G(){
       // Rakuten Linkshare
       case "5031316":
         return rakuten;
+        break;
+      // Amazon
+      case "5027802":
+        return amazon;
         break;
       default:
         break;
@@ -110,7 +135,7 @@ function G4G(){
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
     $.get(templateFile, function (template) {
       var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
-      $('body').append(rendered);
+      $('body').append(rendered); 
       self.bindStopShow(current_host);
     });
   };
