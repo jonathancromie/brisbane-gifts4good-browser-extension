@@ -30,6 +30,8 @@ function G4G(){
 
       if (supportedHost && self.canDisplayPopup(host)) {       
           self.showPopup(host, self.parseUrl(affiliateCode));
+
+          
           // self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
       }
         // self.showPopup(host, self.parseUrl(data[host])); 
@@ -52,9 +54,9 @@ function G4G(){
     var uniqueId;
     $.ajax({
       type: "GET",
-      url: "http://localhost/members.php?id="+id,
+      url: "http://localhost/downloads.php?id="+id,
       datatype: "html",
-      async: false,
+      async: true,
       success: function(response) {
         // console.log(response);
         uniqueId = response;
@@ -80,33 +82,66 @@ function G4G(){
   };
 
   this.getAggregator = function(code) {
-    var format;
-    // 3 Main Aggregators
-    var apd = "?subId1=";
-    var commission_factory = "?UniqueId=";
-    var rakuten = "&u1=";
+    //Aggregators
+    var affiliate_window = "&clickref=UNIQUEID";    
     var amazon = "?tag=";
+    var apd = "?subId1=";
+    var apple = "&ct=UNIQUEID";
+    var book_depository = "&data1=UNIQUEID"
+    var booking = "&label=UNIQUEID";
+    var clix_galore = "&OID=UNIQUEID";
+    var commission_factory = "?UniqueId=";
+    var commission_junction = "?sid=UNIQUEID";
+    var performance = "/pubref:UNIQUEID";
+    var rakuten = "&u1=";
 
     switch(code) {
-      //APD DGM
-      case "5027803":
-        return apd;
-        break;
-      // Commission Factory
-      case "5027801":
-        return commission_factory;
-        break;
-      // Rakuten Linkshare
-      case "5031316":
-        return rakuten;
+      // Affiliate Window
+      case "5104821":
+        return affiliate_window;
         break;
       // Amazon
       case "5027802":
         return amazon;
         break;
+      //APD DGM
+      case "5027803":
+        return apd;
+        break;
+      // Apple Itunes
+      case "5329828":
+        return apple;
+        break;
+      // Book Depository
+      case "5027804":
+        return book_depository;
+        break;
+      // Booking.com
+      case "5023795":
+        return booking;
+        break;
+      // Clix Galore
+      case "5027806":
+        return clix_galore;
+        break;
+      // Commission Factory
+      case "5027801":
+        return commission_factory;
+        break;
+      // Commission Junction
+      case "5047759":
+        return commission_junction;
+        break;
+      // Performance Horizon Group
+      case "5510020":
+        return performance;
+        break;
+      // Rakuten Linkshare
+      case "5031316":
+        return rakuten;
+        break;
       default:
         break;
-
     }
   };
 
@@ -137,6 +172,10 @@ function G4G(){
       var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
       $('body').append(rendered); 
       self.bindStopShow(current_host);
+    });
+
+    $('#g4g-popup').click(function(event) {
+      KangoAPI.closeWindow()
     });
   };
 

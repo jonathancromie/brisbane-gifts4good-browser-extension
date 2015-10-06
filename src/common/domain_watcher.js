@@ -9,37 +9,33 @@
 function G4G(){
   var self   = this;
 
+  /*
+  * Main function
+  */
   this._init = function(){
     $ = window.$.noConflict(true);
     _ = window._.noConflict(true);
 
     this.getSupportedURLs().then(function(data) {
-      var host = self.getCurrentHost();
-      // self.storeG4GParam(host);
+      var host = self.getCurrentHost(); // current url
+      var affiliateCode; // variable to store the unique "affiliate item id"
 
-      var affiliateLink;
-      var affiliateCode;
-
+      // finds the "Home URL" value in the JSON and stores it as supportedHost if it equals the host
       var supportedHost = !!_.find(data, function(value, key) {
-        // console.log(value['Affiliate Link']);
-        // affiliateLink = value['Affiliate Link'];
         affiliateCode = value['Affiliate Program_id'];
-        // console.log(url);
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
       if (supportedHost && self.canDisplayPopup(host)) {       
           self.showPopup(host, self.parseUrl(affiliateCode));
-          // self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
-      }
-        // self.showPopup(host, self.parseUrl(data[host])); 
-        
+      }        
     });
   };
 
+  /*
+  * Function returns "items" array inside the JSON as a deferred object
+  */
   this.getSupportedURLs = function(){
-    
-    // var url = 'http://localhost/affiliate-store-item-list.json';
     var url = 'https://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
     var deferred = new $.Deferred();
     $.getJSON(url, function(data) {
@@ -48,6 +44,10 @@ function G4G(){
     return deferred.promise(); 
   };
 
+  /*
+  * Function connects to downloads database table and retrieves the unique id based on the id parameter
+  * @param id
+  */
   this.getUniqueId = function(id) {
     var uniqueId;
     $.ajax({
@@ -56,68 +56,98 @@ function G4G(){
       datatype: "html",
       async: false,
       success: function(response) {
-        // console.log(response);
         uniqueId = response;
       }
     });
     return uniqueId;
   }
 
+  /*
+  * Function returns a concatenated string of the aggregator format and unique id.
+  */
   this.parseUrl = function(code) {
-    // return url.
-    //   replace("{cause}", "GIVIT").
-    //   replace("{memberId}", "1111").
-    //   replace("{uniqueId}", Date.now());
-
     var uniqueId = self.getUniqueId(1);
-
-    console.log(uniqueId);
-
-    // return self.getAggregator(code) + "{uniqueId}";
-    return self.getAggregator(code) + uniqueId;
-
-    // return oldUrl.replace(oldUrl, newUrl);
+    var aggregator = self.getAggregator(code);
+    return aggregator + uniqueId;
   };
 
+  /*
+  * Function takes the affiliate program id, identifies the aggregator and returns the format.
+  */
   this.getAggregator = function(code) {
-    var format;
-    // 3 Main Aggregators
-    var apd = "?subId1=";
-    var commission_factory = "?UniqueId=";
-    var rakuten = "&u1=";
+    //Aggregators
+    var affiliate_window = "&clickref=UNIQUEID";    
     var amazon = "?tag=";
+    var apd = "?subId1=";
+    var apple = "&ct=UNIQUEID";
+    var book_depository = "&data1=UNIQUEID"
+    var booking = "&label=UNIQUEID";
+    var clix_galore = "&OID=UNIQUEID";
+    var commission_factory = "?UniqueId=";
+    var commission_junction = "?sid=UNIQUEID";
+    var performance = "/pubref:UNIQUEID";
+    var rakuten = "&u1=";
 
     switch(code) {
-      //APD DGM
-      case "5027803":
-        return apd;
-        break;
-      // Commission Factory
-      case "5027801":
-        return commission_factory;
-        break;
-      // Rakuten Linkshare
-      case "5031316":
-        return rakuten;
+      // Affiliate Window
+      case "5104821":
+        return affiliate_window;
         break;
       // Amazon
       case "5027802":
         return amazon;
         break;
+      //APD DGM
+      case "5027803":
+        return apd;
+        break;
+      // Apple Itunes
+      case "5329828":
+        return apple;
+        break;
+      // Book Depository
+      case "5027804":
+        return book_depository;
+        break;
+      // Booking.com
+      case "5023795":
+        return booking;
+        break;
+      // Clix Galore
+      case "5027806":
+        return clix_galore;
+        break;
+      // Commission Factory
+      case "5027801":
+        return commission_factory;
+        break;
+      // Commission Junction
+      case "5047759":
+        return commission_junction;
+        break;
+      // Performance Horizon Group
+      case "5510020":
+        return performance;
+        break;
+      // Rakuten Linkshare
+      case "5031316":
+        return rakuten;
+        break;
       default:
         break;
-
     }
   };
 
-  this.getDeepLink = function() {
-    return String(window.location.href);
-  };
-
+  /*
+  * Function removes http and https from the host url
+  */
   this.getCurrentHost = function(){
     return String(window.location.host.replace('https?://', ''));
   };
 
+  /*
+  * Function removes http and https from the home url in the JSON in an attempt to make each url in the JSON the same
+  */
   this.getHomeURL = function(url){
    var domain;
     //find & remove protocol (http, ftp, etc.) and get domain
@@ -130,6 +160,9 @@ function G4G(){
     return String(domain);
   }
 
+  /*
+  * Function gets popup template file and appends to the body dom element
+  */
   this.showPopup = function(current_host, new_link) {
     var self = this;
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
@@ -140,6 +173,9 @@ function G4G(){
     });
   };
 
+  /*
+  * Function closes popup if the close button is pressed
+  */
   this.bindStopShow = function(host){
     $('.g4g-noshop').click(function(){
       kango.storage.setItem("closeButton:" + host, new Date().getTime());
