@@ -17,7 +17,8 @@ function G4G(){
     _ = window._.noConflict(true);
 
     this.getSupportedURLs().then(function(data) {
-      var host = self.getCurrentHost(); // current url
+      // var host = self.getCurrentHost(); // current url
+      var host = self.getCurrentHost();
       var affiliateCode; // variable to store the unique "affiliate item id"
 
       // finds the "Home URL" value in the JSON and stores it as supportedHost if it equals the host
@@ -26,8 +27,10 @@ function G4G(){
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
-      if (supportedHost && self.canDisplayPopup(host)) {       
-          self.showPopup(host, self.parseUrl(affiliateCode));
+      if (supportedHost && self.canDisplayPopup(host)) { 
+        var url = self.parseUrl(affiliateCode); // This is the deep link + unique id for database
+        // self.showPopup(self.getDeepLink(host), self.parseUrl(affiliateCode));
+        self.showPopup(host, self.parseUrl(affiliateCode));      
       }        
     });
   };
@@ -36,7 +39,7 @@ function G4G(){
   * Function returns "items" array inside the JSON as a deferred object
   */
   this.getSupportedURLs = function(){
-    var url = 'https://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
+    var url = 'http://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
     var deferred = new $.Deferred();
     $.getJSON(url, function(data) {
       deferred.resolve(data['webapps_0']['items']);      
@@ -76,16 +79,18 @@ function G4G(){
   */
   this.getAggregator = function(code) {
     //Aggregators
-    var affiliate_window = "&clickref=UNIQUEID";    
+
+    // hard coding probably isnt the best way - should probably create variables based on the item id in the json
+    var affiliate_window = "&clickref=";    
     var amazon = "?tag=";
     var apd = "?subId1=";
-    var apple = "&ct=UNIQUEID";
-    var book_depository = "&data1=UNIQUEID"
-    var booking = "&label=UNIQUEID";
-    var clix_galore = "&OID=UNIQUEID";
+    var apple = "&ct=";
+    var book_depository = "&data1="
+    var booking = "&label=";
+    var clix_galore = "&OID=";
     var commission_factory = "?UniqueId=";
-    var commission_junction = "?sid=UNIQUEID";
-    var performance = "/pubref:UNIQUEID";
+    var commission_junction = "?sid=";
+    var performance = "/pubref:";
     var rakuten = "&u1=";
 
     switch(code) {
@@ -133,9 +138,16 @@ function G4G(){
       case "5031316":
         return rakuten;
         break;
+      case "5392941":
+        return affiliate_window;
       default:
         break;
     }
+  };
+
+  this.getDeepLink = function(url) {
+    // return window.location.href.replace('https?://', '');
+    return url = url.replace(/^.*\/\/[^\/]+/, '');
   };
 
   /*

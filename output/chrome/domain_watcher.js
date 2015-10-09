@@ -9,40 +9,51 @@
 function G4G(){
   var self   = this;
 
+  /*
+  * Main function
+  */
   this._init = function(){
     $ = window.$.noConflict(true);
     _ = window._.noConflict(true);
 
     this.getSupportedURLs().then(function(data) {
+      // var host = self.getCurrentHost(); // current url
       var host = self.getCurrentHost();
-      // self.storeG4GParam(host);
+      var affiliateCode; // variable to store the unique "affiliate item id"
 
-      var affiliateLink;
-      var affiliateCode;
-
+      // finds the "Home URL" value in the JSON and stores it as supportedHost if it equals the host
       var supportedHost = !!_.find(data, function(value, key) {
-        // console.log(value['Affiliate Link']);
-        // affiliateLink = value['Affiliate Link'];
         affiliateCode = value['Affiliate Program_id'];
-        // console.log(url);
         return self.getHomeURL(value['Home URL']) === host;       
       }); 
 
-      if (supportedHost && self.canDisplayPopup(host)) {       
-          self.showPopup(host, self.parseUrl(affiliateCode));
-
-          
-          // self.showPopup(self.getDeepLink(), self.parseUrl(affiliateCode));
-      }
-        // self.showPopup(host, self.parseUrl(data[host])); 
-        
+      if (supportedHost && self.canDisplayPopup(host)) { 
+        var url = self.parseUrl(affiliateCode); // This is the deep link + unique id for database
+        // self.showPopup(self.getDeepLink(host), self.parseUrl(affiliateCode));
+        self.showPopup(host, self.parseUrl(affiliateCode));
+        // self.closePopup();       
+      }        
     });
   };
 
-  this.getSupportedURLs = function(){
+  this.closePopup = function() {
+
+    // $('#popup-close').click(function() {
+    //   KangoAPI.closeWindow();
+    // });
     
-    // var url = 'http://localhost/affiliate-store-item-list.json';
-    var url = 'https://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
+    $('.popup-close').click(function(){
+      kango.storage.setItem("closeButton:" + host, new Date().getTime());
+      $('#g4g-popup').remove();
+    });
+
+  };
+
+  /*
+  * Function returns "items" array inside the JSON as a deferred object
+  */
+  this.getSupportedURLs = function(){
+    var url = 'http://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
     var deferred = new $.Deferred();
     $.getJSON(url, function(data) {
       deferred.resolve(data['webapps_0']['items']);      
@@ -50,49 +61,50 @@ function G4G(){
     return deferred.promise(); 
   };
 
+  /*
+  * Function connects to downloads database table and retrieves the unique id based on the id parameter
+  * @param id
+  */
   this.getUniqueId = function(id) {
     var uniqueId;
     $.ajax({
       type: "GET",
       url: "http://localhost/downloads.php?id="+id,
       datatype: "html",
-      async: true,
+      async: false,
       success: function(response) {
-        // console.log(response);
         uniqueId = response;
       }
     });
     return uniqueId;
   }
 
+  /*
+  * Function returns a concatenated string of the aggregator format and unique id.
+  */
   this.parseUrl = function(code) {
-    // return url.
-    //   replace("{cause}", "GIVIT").
-    //   replace("{memberId}", "1111").
-    //   replace("{uniqueId}", Date.now());
-
     var uniqueId = self.getUniqueId(1);
-
-    console.log(uniqueId);
-
-    // return self.getAggregator(code) + "{uniqueId}";
-    return self.getAggregator(code) + uniqueId;
-
-    // return oldUrl.replace(oldUrl, newUrl);
+    var aggregator = self.getAggregator(code);
+    return aggregator + uniqueId;
   };
 
+  /*
+  * Function takes the affiliate program id, identifies the aggregator and returns the format.
+  */
   this.getAggregator = function(code) {
     //Aggregators
-    var affiliate_window = "&clickref=UNIQUEID";    
+
+    // hard coding probably isnt the best way - should probably create variables based on the item id in the json
+    var affiliate_window = "&clickref=";    
     var amazon = "?tag=";
     var apd = "?subId1=";
-    var apple = "&ct=UNIQUEID";
-    var book_depository = "&data1=UNIQUEID"
-    var booking = "&label=UNIQUEID";
-    var clix_galore = "&OID=UNIQUEID";
+    var apple = "&ct=";
+    var book_depository = "&data1="
+    var booking = "&label=";
+    var clix_galore = "&OID=";
     var commission_factory = "?UniqueId=";
-    var commission_junction = "?sid=UNIQUEID";
-    var performance = "/pubref:UNIQUEID";
+    var commission_junction = "?sid=";
+    var performance = "/pubref:";
     var rakuten = "&u1=";
 
     switch(code) {
@@ -140,19 +152,28 @@ function G4G(){
       case "5031316":
         return rakuten;
         break;
+      case "5392941":
+        return affiliate_window;
       default:
         break;
     }
   };
 
-  this.getDeepLink = function() {
-    return String(window.location.href);
+  this.getDeepLink = function(url) {
+    // return window.location.href.replace('https?://', '');
+    return url = url.replace(/^.*\/\/[^\/]+/, '');
   };
 
+  /*
+  * Function removes http and https from the host url
+  */
   this.getCurrentHost = function(){
     return String(window.location.host.replace('https?://', ''));
   };
 
+  /*
+  * Function removes http and https from the home url in the JSON in an attempt to make each url in the JSON the same
+  */
   this.getHomeURL = function(url){
    var domain;
     //find & remove protocol (http, ftp, etc.) and get domain
@@ -165,6 +186,9 @@ function G4G(){
     return String(domain);
   }
 
+  /*
+  * Function gets popup template file and appends to the body dom element
+  */
   this.showPopup = function(current_host, new_link) {
     var self = this;
     var templateFile = kango.io.getResourceUrl('res/popup.html.mst');
@@ -173,12 +197,11 @@ function G4G(){
       $('body').append(rendered); 
       self.bindStopShow(current_host);
     });
-
-    $('#g4g-popup').click(function(event) {
-      KangoAPI.closeWindow()
-    });
   };
 
+  /*
+  * Function closes popup if the close button is pressed
+  */
   this.bindStopShow = function(host){
     $('.g4g-noshop').click(function(){
       kango.storage.setItem("closeButton:" + host, new Date().getTime());
