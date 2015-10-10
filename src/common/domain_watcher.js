@@ -182,6 +182,17 @@ function G4G(){
       var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
       $('body').append(rendered); 
       self.bindStopShow(current_host);
+      self.closePopup(current_host);
+    });
+  };
+
+  /*
+  * Function closes popup when activate free donation button is pressed
+  */
+  this.closePopup = function(host){
+    $('.g4g-close').click(function(){
+      kango.storage.setItem("closeButton:" + host, new Date().getTime());
+      $('#g4g-popup').remove();
     });
   };
 

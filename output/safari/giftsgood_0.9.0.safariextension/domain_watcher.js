@@ -30,23 +30,9 @@ function G4G(){
       if (supportedHost && self.canDisplayPopup(host)) { 
         var url = self.parseUrl(affiliateCode); // This is the deep link + unique id for database
         // self.showPopup(self.getDeepLink(host), self.parseUrl(affiliateCode));
-        self.showPopup(host, self.parseUrl(affiliateCode));
-        // self.closePopup();       
+        self.showPopup(host, self.parseUrl(affiliateCode));      
       }        
     });
-  };
-
-  this.closePopup = function() {
-
-    // $('#popup-close').click(function() {
-    //   KangoAPI.closeWindow();
-    // });
-    
-    $('.popup-close').click(function(){
-      kango.storage.setItem("closeButton:" + host, new Date().getTime());
-      $('#g4g-popup').remove();
-    });
-
   };
 
   /*
@@ -196,6 +182,17 @@ function G4G(){
       var rendered = Mustache.render(template, {current_host: current_host, new_link: new_link});
       $('body').append(rendered); 
       self.bindStopShow(current_host);
+      self.closePopup(current_host);
+    });
+  };
+
+  /*
+  * Function closes popup when activate free donation button is pressed
+  */
+  this.closePopup = function(host){
+    $('.g4g-close').click(function(){
+      kango.storage.setItem("closeButton:" + host, new Date().getTime());
+      $('#g4g-popup').remove();
     });
   };
 
