@@ -16,9 +16,9 @@ function G4G(){
     $ = window.$.noConflict(true);
     _ = window._.noConflict(true);
 
+    // Main loop
     this.getSupportedURLs().then(function(data) {
-      // var host = self.getCurrentHost(); // current url
-      var host = self.getCurrentHost();
+      var host = self.getCurrentHost(); // current url
       var affiliateCode; // variable to store the unique "affiliate item id"
 
       // finds the "Home URL" value in the JSON and stores it as supportedHost if it equals the host
@@ -29,7 +29,6 @@ function G4G(){
 
       if (supportedHost && self.canDisplayPopup(host)) { 
         var url = self.parseUrl(affiliateCode); // This is the deep link + unique id for database
-        // self.showPopup(self.getDeepLink(host), self.parseUrl(affiliateCode));
         self.showPopup(host, self.parseUrl(affiliateCode));      
       }        
     });
@@ -39,7 +38,7 @@ function G4G(){
   * Function returns "items" array inside the JSON as a deferred object
   */
   this.getSupportedURLs = function(){
-    var url = 'http://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
+    var url = 'https://www.gifts4good.org.au/affiliate-store-item-list?json=true'; 
     var deferred = new $.Deferred();
     $.getJSON(url, function(data) {
       deferred.resolve(data['webapps_0']['items']);      
@@ -63,15 +62,18 @@ function G4G(){
       }
     });
     return uniqueId;
-  }
 
-  /*
-  * Function returns a concatenated string of the aggregator format and unique id.
-  */
-  this.parseUrl = function(code) {
-    var uniqueId = self.getUniqueId(1);
-    var aggregator = self.getAggregator(code);
-    return aggregator + uniqueId;
+
+    
+    // var uniqueId;
+    // $.get("http://localhost/downloads.php?id="+id)
+    //   .done(function(response) {
+    //     uniqueId = response;
+    //     console.log(uniqueId);
+    //     return uniqueId;
+    //   });
+      
+      
   };
 
   /*
@@ -139,15 +141,19 @@ function G4G(){
         return rakuten;
         break;
       case "5392941":
-        return affiliate_window;
+        return affiliate_window; 
       default:
         break;
     }
   };
 
-  this.getDeepLink = function(url) {
-    // return window.location.href.replace('https?://', '');
-    return url = url.replace(/^.*\/\/[^\/]+/, '');
+  /*
+  * Function returns a concatenated string of the aggregator format and unique id.
+  */
+  this.parseUrl = function(code) {
+    var uniqueId = self.getUniqueId(1);
+    var aggregator = self.getAggregator(code);
+    return aggregator + uniqueId;
   };
 
   /*

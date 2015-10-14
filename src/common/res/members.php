@@ -6,15 +6,13 @@
 
 <?php
 
-echo("<script>console.log('Hello');</script>");
-
 $mysqli = new mysqli('fastapps04.qut.edu.au:3306','n9136690','oneplus','n9136690');
 if ($mysqli->connect_errno) {
     exit();
 }
 
 $search = $_GET('search');
-echo("<script>console.log(".$search."<);</script>");
+echo($search);
 
 $query = "SELECT unique_id FROM members WHERE first_name = '" . $search . "'";
 
