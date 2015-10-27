@@ -19,20 +19,80 @@ function G4G(){
     // Main loop
     this.getSupportedURLs().then(function(data) {
       var host = self.getCurrentHost(); // current url
-      var affiliateCode; // variable to store the unique "affiliate item id"
+      
+      var optIn; // variable to store "download opt in" value
 
       // finds the "Home URL" value in the JSON and stores it as supportedHost if it equals the host
-      var supportedHost = !!_.find(data, function(value, key) {
-        affiliateCode = value['Affiliate Program_id'];
-        return self.getHomeURL(value['Home URL']) === host;       
-      }); 
 
-      if (supportedHost && self.canDisplayPopup(host)) { 
-        var url = self.parseUrl(affiliateCode); // This is the deep link + unique id for database
-        self.showPopup(host, self.parseUrl(affiliateCode));      
+      var affiliateItemId; // variable to store the unique "affiliate item id"
+      var uniqueIdLabel;
+      var affiliateLink;
+      var deepLink;
+      var url;
+      var path;
+
+      var supportedHost = !!_.find(data, function(value, key) {
+        // affiliateCode = value['Affiliate Program_id'];
+        // var itemsArray = value['webapps_1']['items'];
+
+
+        // var items = !!_.find(value['webapps_1']['items'], function(v, k) {
+        //   console.log(v['Unique ID Label']);
+        //   uniqueIdLabel = v['Unique ID Label'];
+        // });
+
+        // Object.keys(value[21]).forEach(function(key){
+        //   console.log(key);
+        // });
+
+        // console.log(Object.keys(value)[21]);
+        // path = self.stripTrailingSlash(window.location.pathname);
+        path = encodeURIComponent(self.stripTrailingSlash(window.location.pathname));
+        url = encodeURIComponent(window.location.href);
+        affiliateLink = value['Affiliate Link'];
+
+        for (var object in value) {
+          if (object == Object.keys(value)[21]) {
+            affiliateItemId = value[object]['items']['0']['itemid'];            
+            uniqueIdLabel = value[object]['items']['0']['Unique ID Label'];            
+            deepLink = value[object]['items']['0']['Deep Link'];
+          }
+        }
+
+        optIn = value['Download opt in'];
+        return self.getHomeURL(value['Home URL']) === host;       
+      });
+  
+      // console.log("affiliateLink: " + affiliateLink);
+      // console.log("url: " + url);
+      // console.log("uniqueIdLabel: " + uniqueIdLabel);
+      // console.log("deepLink: " + deepLink);
+      // console.log("itemID: " + affiliateItemId);      
+
+
+      // if retailer url exists within json AND if retailer has opted in
+      // another field "enabled" if retailer has opted in: can temporarly be disabled
+      if (supportedHost && self.canDisplayPopup(host) && optIn == 1) { 
+        
+        // console.log(affiliateLink + deepLink + url);
+
+        // console.log(deepLink + path + uniqueIdLabel + self.parseUrl());
+        var result = self.getDeepLink(affiliateItemId, affiliateLink, deepLink, uniqueIdLabel, url);
+        console.log(result);
+
+        // self.showPopup(affiliateLink + deepLink + uniqueIdLabel + self.getUniqueId(1));    
+        // self.showPopup(host, affiliateLink + deepLink + path + uniqueIdLabel + self.getUniqueId(1));   
+        self.showPopup(host, result);
       }        
     });
   };
+
+  this.stripTrailingSlash = function(str) {
+    if(str.substr(-1) === '/') {
+        return str.substr(0, str.length - 1);
+    }
+    return str;
+  }
 
   /*
   * Function returns "items" array inside the JSON as a deferred object
@@ -51,109 +111,60 @@ function G4G(){
   * @param id
   */
   this.getUniqueId = function(id) {
-    var uniqueId;
-    $.ajax({
-      type: "GET",
-      url: "http://localhost/downloads.php?id="+id,
-      datatype: "html",
-      async: false,
-      success: function(response) {
-        uniqueId = response;
-      }
-    });
-    return uniqueId;
-
-
-    
     // var uniqueId;
-    // $.get("http://localhost/downloads.php?id="+id)
-    //   .done(function(response) {
+    // $.ajax({
+    //   type: "GET",
+    //   url: "http://localhost/downloads.php?id="+id,
+    //   datatype: "html",
+    //   async: false,
+    //   success: function(response) {
     //     uniqueId = response;
-    //     console.log(uniqueId);
-    //     return uniqueId;
-    //   });
-      
+    //   }
+    // });
+    // return "B" + uniqueId;
+
+    $.get("http://localhost/downloads.php?id="+id, function(data) {
+      $.each(data, function(value, key) {
+        console.log(value);
+      });
+      return data;
+    });
       
   };
 
-  /*
-  * Function takes the affiliate program id, identifies the aggregator and returns the format.
-  */
-  this.getAggregator = function(code) {
-    //Aggregators
+  this.getDeepLink = function(itemId, affiliateLink, deepLink, uniqueIdLabel, url) {
+    var apd = 5027803;
+    var rakuten = 5031316;
+    var affiliate_window = 5392941;
+    var clix_galore = 5027806;
 
-    // hard coding probably isnt the best way - should probably create variables based on the item id in the json
-    var affiliate_window = "&clickref=";    
-    var amazon = "?tag=";
-    var apd = "?subId1=";
-    var apple = "&ct=";
-    var book_depository = "&data1="
-    var booking = "&label=";
-    var clix_galore = "&OID=";
-    var commission_factory = "?UniqueId=";
-    var commission_junction = "?sid=";
-    var performance = "/pubref:";
-    var rakuten = "&u1=";
+    switch(itemId) {
+      case apd:
+        console.log(affiliateLink + deepLink + url + uniqueIdLabel);
+        return affiliateLink + deepLink + url + uniqueIdLabel;
 
-    switch(code) {
-      // Affiliate Window
-      case "5104821":
-        return affiliate_window;
+      case rakuten:
         break;
-      // Amazon
-      case "5027802":
-        return amazon;
+
+      case affiliate_window:
+        return affiliateLink + uniqueIdLabel + deepLink + url;
         break;
-      //APD DGM
-      case "5027803":
-        return apd;
+
+      case clix_galore:
+        return affiliateLink + url + uniqueIdLabel;
         break;
-      // Apple Itunes
-      case "5329828":
-        return apple;
-        break;
-      // Book Depository
-      case "5027804":
-        return book_depository;
-        break;
-      // Booking.com
-      case "5023795":
-        return booking;
-        break;
-      // Clix Galore
-      case "5027806":
-        return clix_galore;
-        break;
-      // Commission Factory
-      case "5027801":
-        return commission_factory;
-        break;
-      // Commission Junction
-      case "5047759":
-        return commission_junction;
-        break;
-      // Performance Horizon Group
-      case "5510020":
-        return performance;
-        break;
-      // Rakuten Linkshare
-      case "5031316":
-        return rakuten;
-        break;
-      case "5392941":
-        return affiliate_window; 
+
       default:
-        break;
+        break; 
     }
   };
 
   /*
   * Function returns a concatenated string of the aggregator format and unique id.
   */
-  this.parseUrl = function(code) {
+  this.parseUrl = function() {
     var uniqueId = self.getUniqueId(1);
-    var aggregator = self.getAggregator(code);
-    return aggregator + uniqueId;
+    return uniqueId;
   };
 
   /*
