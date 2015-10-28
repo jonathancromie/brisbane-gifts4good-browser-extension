@@ -32,21 +32,6 @@ function G4G(){
       var path;
 
       var supportedHost = !!_.find(data, function(value, key) {
-        // affiliateCode = value['Affiliate Program_id'];
-        // var itemsArray = value['webapps_1']['items'];
-
-
-        // var items = !!_.find(value['webapps_1']['items'], function(v, k) {
-        //   console.log(v['Unique ID Label']);
-        //   uniqueIdLabel = v['Unique ID Label'];
-        // });
-
-        // Object.keys(value[21]).forEach(function(key){
-        //   console.log(key);
-        // });
-
-        // console.log(Object.keys(value)[21]);
-        // path = self.stripTrailingSlash(window.location.pathname);
         path = encodeURIComponent(self.stripTrailingSlash(window.location.pathname));
         url = encodeURIComponent(window.location.href);
         affiliateLink = value['Affiliate Link'];
@@ -62,26 +47,12 @@ function G4G(){
         optIn = value['Download opt in'];
         return self.getHomeURL(value['Home URL']) === host;       
       });
-  
-      // console.log("affiliateLink: " + affiliateLink);
-      // console.log("url: " + url);
-      // console.log("uniqueIdLabel: " + uniqueIdLabel);
-      // console.log("deepLink: " + deepLink);
-      // console.log("itemID: " + affiliateItemId);      
-
 
       // if retailer url exists within json AND if retailer has opted in
       // another field "enabled" if retailer has opted in: can temporarly be disabled
       if (supportedHost && self.canDisplayPopup(host) && optIn == 1) { 
-        
-        // console.log(affiliateLink + deepLink + url);
-
-        // console.log(deepLink + path + uniqueIdLabel + self.parseUrl());
         var result = self.getDeepLink(affiliateItemId, affiliateLink, deepLink, uniqueIdLabel, url);
-        console.log(result);
-
-        // self.showPopup(affiliateLink + deepLink + uniqueIdLabel + self.getUniqueId(1));    
-        // self.showPopup(host, affiliateLink + deepLink + path + uniqueIdLabel + self.getUniqueId(1));   
+        console.log(result);  
         self.showPopup(host, result);
       }        
     });
@@ -111,18 +82,6 @@ function G4G(){
   * @param id
   */
   this.getUniqueId = function(id) {
-    // var uniqueId;
-    // $.ajax({
-    //   type: "GET",
-    //   url: "http://localhost/downloads.php?id="+id,
-    //   datatype: "html",
-    //   async: false,
-    //   success: function(response) {
-    //     uniqueId = response;
-    //   }
-    // });
-    // return "B" + uniqueId;
-
     $.get("http://localhost/downloads.php?id="+id, function(data) {
       $.each(data, function(value, key) {
         console.log(value);
